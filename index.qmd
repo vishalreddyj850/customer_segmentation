@@ -1,0 +1,49 @@
+---
+title: "Customer Segmentation for E-commerce using K-means Clustering"
+author: "Vishal Reddy Jakkareddy"
+date: '`r Sys.Date()`'
+format:
+  html:
+    code-fold: true
+course: Capstone Projects in Data Science
+bibliography: references.bib # file contains bibtex for references
+#always_allow_html: true # this allows to get PDF with HTML features
+self-contained: true
+execute: 
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+Slides: [slides.html](slides.html){target="_blank"} ( Go to `slides.qmd`
+to edit)
+
+
+## Introduction
+
+#### K-Means Clustering Approach for Intelligent Customer Segmentation Using Customer Purchase Behavior Data [@tabianan2022k]:
+- This study applies the K-Means clustering algorithm to perform intelligent customer segmentation based on e-commerce purchase behavior data. Customer segmentation is crucial for dividing customers into groups with similar characteristics, enabling businesses to target the right audience effectively and boost profitability. Using a Malaysian e-commerce dataset, the research analyzes customer behavior to identify and categorize high, moderate, and low-interest customer segments. The proposed SAPK + K-Means algorithm demonstrates improved accuracy over traditional methods like Affinity Propagation and standard K-Means. The study emphasizes the role of segmentation in optimizing marketing strategies, improving customer retention, and increasing revenue. Data visualization dashboards are also used to present actionable insights, making it easier for businesses to understand and act on customer behavior. Despite limitations like microdata volatility, the research sets the groundwork for future studies to explore deep learning methods for enhanced segmentation.
+
+
+#### Customer Segmentation of E-commerce data using K-means Clustering Algorithm [@10048834]:
+- This study explores the application of the K-Means clustering algorithm for customer segmentation in e-commerce. By analyzing a dataset of 500 entries with attributes like session length, time spent on mobile apps and websites, membership duration, and yearly spending, the research aims to determine whether the company should focus on its website or mobile app. Using the elbow method to select the optimal number of clusters, three customer segments were identified. The findings suggest that customer behavior, such as membership duration and platform engagement, directly correlates with spending patterns. Recommendations include targeting campaigns to increase customer retention and emphasizing membership benefits for profitability. The study concludes that customer segmentation using K-Means is a practical and efficient method for tailoring marketing strategies in a competitive e-commerce environment.
+
+
+#### Research on Segmenting E-Commerce Customer throughan Improved K-Medoids Clustering Algorithm [@wu2022research]:
+- The article focuses on improving e-commerce customer segmentation using an enhanced K-Medoids clustering algorithm and a modified RFM (Recency, Frequency, Monetary) model. It introduces new customer behavior features, like adding items to the cart and favorites, into the RFM model to better reflect shopping habits. To enhance clustering accuracy and efficiency, the authors integrate the Calinski-Harabasz (CH) index to find the best number of clusters and apply a K-means++ inspired method for selecting initial cluster centers. Their method outperforms traditional algorithms in accuracy and speed, making it effective for analyzing diverse customer groups and enabling tailored marketing strategies.
+
+
+#### Comparison of K-Means and DBSCAN Algorithms for Customer Segmentation in E-commerce [@paramita2024comparison]:
+- The study compares two popular algorithms, K-Means and DBSCAN, for customer segmentation in e-commerce. It focuses on analyzing their performance in grouping customers based on purchasing behavior. K-Means is known for its simplicity and speed, making it effective for datasets with clear cluster boundaries. On the other hand, DBSCAN excels in identifying clusters of various shapes and handling noise, making it suitable for complex datasets. The study evaluates both algorithms on different metrics like clustering accuracy and efficiency, helping to determine the best choice for segmenting e-commerce customers and improving marketing strategies.
+
+
+#### Constrained K-Means Clustering [@bradley2000constrained] :
+- The paper discusses a modified version of the K-Means clustering algorithm that ensures each cluster has a minimum number of points. Regular K-Means sometimes produces empty or very small clusters, especially with high-dimensional data and a large number of clusters. The authors propose adding constraints to force a minimum number of points in each cluster, solving the problem using linear programming. Their method improves clustering results and avoids poor local solutions. Tests on real datasets show that constrained K-Means often produces better summaries of data and is less likely to get stuck in bad clustering patterns.
+
+
+#### The Analysis of a Simple k-Means Clustering Algorithm [@10.1145/336154.336189] :
+- This paper explains a simple and efficient way to run the k-Means clustering algorithm, which is widely used for grouping data points. Instead of the usual approach, the authors introduce the "filtering algorithm," which builds a kd-tree for data points rather than cluster centers, making it faster in many cases. The method helps speed up the process by avoiding unnecessary calculations, especially when data points naturally form clear clusters. The authors tested this approach on both real and synthetic data, showing that it runs faster than traditional methods, particularly when clusters are well separated.
+
+
