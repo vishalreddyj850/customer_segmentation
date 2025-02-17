@@ -26,29 +26,30 @@ Customer segmentation is a crucial process in e-commerce, enabling businesses to
 
 Traditional customer segmentation approaches rely on demographic or psychographic attributes, but modern techniques utilize behavioral data for more precise segmentation. Clustering methods such as K-Means, K-Medoids, and DBSCAN have been extensively used in prior research to segment customers effectively [@tabianan2022k; @10048834]. This project applies the K-Means clustering algorithm to an online retail dataset to categorize customers based on their purchasing patterns, providing actionable insights for business decision-making.
 
-This study aims to analyze customer segmentation within an e-commerce dataset using K-Means clustering in R. The dataset, `Online_Retail.xlsx`, contains transactional records that will be preprocessed, visualized, and clustered to identify distinct customer segments. The insights derived from this clustering will aid in understanding customer behavior, facilitating personalized marketing strategies, and improving business profitability.
+This study aims to analyze customer segmentation within an e-commerce dataset using K-Means clustering in R. The dataset, <a href="https://github.com/vishalreddyj850/customer_segmentation/blob/cc6d85d3a3c6c4adacf4270f3d863b06d1d26988/Online_Retail.xlsx" target="_blank">`Online_Retail.xlsx`</a>, contains transactional records that will be preprocessed, visualized, and clustered to identify distinct customer segments. The insights derived from this clustering will aid in understanding customer behavior, facilitating personalized marketing strategies, and improving business profitability.
 
-## Literature Review  
+### Literature Review  
 
-### K-Means Clustering for Customer Segmentation  
+#### K-Means Clustering for Customer Segmentation  
 K-Means clustering is widely used for customer segmentation due to its simplicity and efficiency in handling large datasets. Tabianan et al. [@tabianan2022k] applied the K-Means algorithm to Malaysian e-commerce data, demonstrating its effectiveness in identifying customer segments based on purchasing behavior. Their research introduced the SAPK + K-Means approach, which improved clustering accuracy over traditional methods such as Affinity Propagation.
 
 Rajput & Singh [@10048834] explored customer segmentation using K-Means on a dataset of 500 customers, considering attributes like session length, time spent on mobile apps, and yearly spending. The elbow method was used to determine the optimal number of clusters, revealing that platform engagement correlates strongly with spending behavior. Their findings suggest that targeted marketing efforts should focus on enhancing membership benefits and retention strategies.
 
-### Alternative Clustering Approaches  
+#### Alternative Clustering Approaches  
 Several studies have explored alternative clustering methods to improve customer segmentation. Wu et al. [@wu2022research] enhanced K-Medoids clustering by integrating a modified RFM (Recency, Frequency, Monetary) model, incorporating additional behavioral metrics such as cart additions and favorite selections. Their approach yielded better clustering accuracy compared to traditional methods.
 
 A comparative study by Paramita & Hariguna [@paramita2024comparison] analyzed the performance of K-Means and DBSCAN for e-commerce customer segmentation. While K-Means performed well with clearly defined clusters, DBSCAN was more effective in identifying noise and handling datasets with varying density distributions.
 
-### Optimizations and Improvements in K-Means Clustering  
+#### Optimizations and Improvements in K-Means Clustering  
 Bradley et al. [@bradley2000constrained] introduced constrained K-Means clustering, ensuring a minimum number of data points per cluster to prevent poorly defined segments. Kanungo et al. [@10.1145/336154.336189] proposed a filtering algorithm that accelerates K-Means by using kd-trees, optimizing the clustering process for large datasets.
 
 Recent studies have combined exploratory data analysis (EDA) with K-Means clustering to enhance customer segmentation. Devaghi & Sudha [@10183143] emphasized the importance of thorough data preparation, feature selection, and robust cluster evaluation in achieving meaningful segmentation.
 
-### Practical Applications and Industry Relevance  
+#### Practical Applications and Industry Relevance  
 Several studies highlight the real-world applications of K-Means clustering in e-commerce and retail. Agrawal et al. [@10105070] implemented a hybrid approach combining the Elbow method and K-Means to analyze a Kaggle dataset, demonstrating its effectiveness in identifying customer groups for personalized marketing strategies. Similarly, Arul et al. [@9725630] applied K-Means clustering to mall customer data, revealing insights that helped businesses improve targeted advertising and service offerings.
 
 This study builds upon existing research by applying K-Means clustering to the `Online_Retail.xlsx` dataset, aiming to derive practical insights for customer segmentation. The next phase of the project will involve data preprocessing, exploratory analysis, and visualization to prepare the dataset for clustering.
+
 
 ## References  
 
