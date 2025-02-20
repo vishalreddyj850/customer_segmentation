@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Vishal Reddy Jakkareddy and PruthviRaj Amgoth">
-<meta name="dcterms.date" content="2025-02-17">
+<meta name="dcterms.date" content="2025-02-19">
 
 <title>Customer Segmentation for E-commerce using K-means Clustering</title>
 <style>
@@ -3089,7 +3089,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 17, 2025</p>
+      <p class="date">February 19, 2025</p>
     </div>
   </div>
   
@@ -3106,7 +3106,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Customer segmentation is a crucial process in e-commerce, enabling businesses to categorize customers based on behavioral patterns to optimize marketing strategies and improve customer retention. By leveraging machine learning techniques such as K-Means clustering, companies can extract valuable insights from transactional data and tailor their services to different customer segments. The growing volume of online retail data necessitates efficient clustering algorithms that can accurately identify customer groups based on purchasing behaviors, preferences, and engagement levels.</p>
 <p>Traditional customer segmentation approaches rely on demographic or psychographic attributes, but modern techniques utilize behavioral data for more precise segmentation. Clustering methods such as K-Means, K-Medoids, and DBSCAN have been extensively used in prior research to segment customers effectively <span class="citation" data-cites="tabianan2022k 10048834">(<a href="#ref-tabianan2022k" role="doc-biblioref">Tabianan, Velu, and Ravi 2022</a>; <a href="#ref-10048834" role="doc-biblioref">Rajput and Singh 2023</a>)</span>. This project applies the K-Means clustering algorithm to an online retail dataset to categorize customers based on their purchasing patterns, providing actionable insights for business decision-making.</p>
-<p>This study aims to analyze customer segmentation within an e-commerce dataset using K-Means clustering in R. The dataset, <a href="https://github.com/vishalreddyj850/customer_segmentation/blob/cc6d85d3a3c6c4adacf4270f3d863b06d1d26988/Online_Retail.xlsx" target="_blank"><code>Online_Retail.xlsx</code></a>, contains transactional records that will be preprocessed, visualized, and clustered to identify distinct customer segments. The insights derived from this clustering will aid in understanding customer behavior, facilitating personalized marketing strategies, and improving business profitability.</p>
+<p>This study aims to analyze customer segmentation within an e-commerce dataset using K-Means clustering in R. The dataset, <a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank"><code>Online_Retail.xlsx</code></a><span class="citation" data-cites="online_retail_352">(<a href="#ref-online_retail_352" role="doc-biblioref">Chen 2015</a>)</span>, contains transactional records that will be preprocessed, visualized, and clustered to identify distinct customer segments. The insights derived from this clustering will aid in understanding customer behavior, facilitating personalized marketing strategies, and improving business profitability.</p>
 <section id="literature-review" class="level3">
 <h3 class="anchored" data-anchor-id="literature-review">Literature Review</h3>
 <section id="k-means-clustering-for-customer-segmentation" class="level4">
@@ -3145,6 +3145,9 @@ Arul, V., Ashutosh Kumar, and Aman Agarwal. 2021. <span>“Segmenting Mall Custo
 </div>
 <div id="ref-bradley2000constrained" class="csl-entry" role="listitem">
 Bradley, Paul S, Kristin P Bennett, and Ayhan Demiriz. 2000. <span>“Constrained k-Means Clustering.”</span> <em>Microsoft Research, Redmond</em> 20 (0): 0.
+</div>
+<div id="ref-online_retail_352" class="csl-entry" role="listitem">
+Chen, Daqing. 2015. <span>“<span>Online Retail</span>.”</span> UCI Machine Learning Repository.
 </div>
 <div id="ref-10.1145/336154.336189" class="csl-entry" role="listitem">
 Kanungo, Tapas, David M. Mount, Nathan S. Netanyahu, Christine Piatko, Ruth Silverman, and Angela Y. Wu. 2000. <span>“The Analysis of a Simple k-Means Clustering Algorithm.”</span> In <em>Proceedings of the Sixteenth Annual Symposium on Computational Geometry</em>, 100–109. SCG ’00. New York, NY, USA: Association for Computing Machinery. <a href="https://doi.org/10.1145/336154.336189">https://doi.org/10.1145/336154.336189</a>.
