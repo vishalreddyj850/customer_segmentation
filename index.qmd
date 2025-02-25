@@ -20,35 +20,189 @@ editor:
 Slides: [slides.html](slides.html){target="_blank"} ( Go to `slides.qmd`
 to edit)
 
+
+
 ## Introduction  
 
-Customer segmentation is a crucial process in e-commerce, enabling businesses to categorize customers based on behavioral patterns to optimize marketing strategies and improve customer retention. By leveraging machine learning techniques such as K-Means clustering, companies can extract valuable insights from transactional data and tailor their services to different customer segments. The growing volume of online retail data necessitates efficient clustering algorithms that can accurately identify customer groups based on purchasing behaviors, preferences, and engagement levels.
+Customer segmentation is an essential strategy in e-commerce that allows businesses to classify customers based on purchasing behaviors, enabling targeted marketing efforts and customer retention strategies. Traditional segmentation relied on demographic attributes, but with advancements in machine learning, data-driven approaches such as K-Means clustering have become widely adopted. This study leverages K-Means clustering to analyze an online retail dataset and identify distinct customer groups based on their purchase behaviors.
 
-Traditional customer segmentation approaches rely on demographic or psychographic attributes, but modern techniques utilize behavioral data for more precise segmentation. Clustering methods such as K-Means, K-Medoids, and DBSCAN have been extensively used in prior research to segment customers effectively [@tabianan2022k; @10048834]. This project applies the K-Means clustering algorithm to an online retail dataset to categorize customers based on their purchasing patterns, providing actionable insights for business decision-making.
+Recent research has highlighted the advantages of clustering algorithms in segmenting customers effectively. K-Means clustering remains a popular choice due to its efficiency and ease of implementation [@paramita2024comparison]. Alternative methods such as K-Medoids and DBSCAN have also been explored, showing advantages in handling noise and varying cluster densities [@wu2022research]. This study applies K-Means clustering using R to segment customers from an online retail dataset, enabling a data-driven approach to customer analysis and decision-making.
 
-This study aims to analyze customer segmentation within an e-commerce dataset using K-Means clustering in R. The dataset, <a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank">`Online_Retail.xlsx`</a>[@online_retail_352], contains transactional records that will be preprocessed, visualized, and clustered to identify distinct customer segments. The insights derived from this clustering will aid in understanding customer behavior, facilitating personalized marketing strategies, and improving business profitability.
+## Literature Review  
 
-### Literature Review  
+### K-Means Clustering in E-Commerce  
 
-#### K-Means Clustering for Customer Segmentation  
-K-Means clustering is widely used for customer segmentation due to its simplicity and efficiency in handling large datasets. Tabianan et al. [@tabianan2022k] applied the K-Means algorithm to Malaysian e-commerce data, demonstrating its effectiveness in identifying customer segments based on purchasing behavior. Their research introduced the SAPK + K-Means approach, which improved clustering accuracy over traditional methods such as Affinity Propagation.
+The effectiveness of K-Means clustering for customer segmentation has been demonstrated in various studies. Tabianan et al. [@tabianan2022k] implemented the K-Means algorithm on a Malaysian e-commerce dataset, improving clustering accuracy by incorporating SAPK. Similarly, Rajput & Singh [@10048834] analyzed session length, time spent on mobile and web platforms, and yearly spending to determine optimal customer segmentation using the elbow method.
 
-Rajput & Singh [@10048834] explored customer segmentation using K-Means on a dataset of 500 customers, considering attributes like session length, time spent on mobile apps, and yearly spending. The elbow method was used to determine the optimal number of clusters, revealing that platform engagement correlates strongly with spending behavior. Their findings suggest that targeted marketing efforts should focus on enhancing membership benefits and retention strategies.
 
-#### Alternative Clustering Approaches  
-Several studies have explored alternative clustering methods to improve customer segmentation. Wu et al. [@wu2022research] enhanced K-Medoids clustering by integrating a modified RFM (Recency, Frequency, Monetary) model, incorporating additional behavioral metrics such as cart additions and favorite selections. Their approach yielded better clustering accuracy compared to traditional methods.
+### Optimizing K-Means Clustering  
 
-A comparative study by Paramita & Hariguna [@paramita2024comparison] analyzed the performance of K-Means and DBSCAN for e-commerce customer segmentation. While K-Means performed well with clearly defined clusters, DBSCAN was more effective in identifying noise and handling datasets with varying density distributions.
+Bradley et al. [@bradley2000constrained] introduced a constrained K-Means algorithm, which ensures a minimum number of points per cluster, improving the stability of segmentation. Kanungo et al. [@10.1145/336154.336189] proposed a filtering algorithm that optimizes K-Means clustering by using kd-trees, enhancing efficiency in large datasets.
 
-#### Optimizations and Improvements in K-Means Clustering  
-Bradley et al. [@bradley2000constrained] introduced constrained K-Means clustering, ensuring a minimum number of data points per cluster to prevent poorly defined segments. Kanungo et al. [@10.1145/336154.336189] proposed a filtering algorithm that accelerates K-Means by using kd-trees, optimizing the clustering process for large datasets.
+Devaghi & Sudha [@10183143] emphasized the significance of exploratory data analysis (EDA) combined with K-Means clustering for customer segmentation, highlighting the need for robust data preprocessing and feature selection.
 
-Recent studies have combined exploratory data analysis (EDA) with K-Means clustering to enhance customer segmentation. Devaghi & Sudha [@10183143] emphasized the importance of thorough data preparation, feature selection, and robust cluster evaluation in achieving meaningful segmentation.
+### Real-World Applications  
 
-#### Practical Applications and Industry Relevance  
-Several studies highlight the real-world applications of K-Means clustering in e-commerce and retail. Agrawal et al. [@10105070] implemented a hybrid approach combining the Elbow method and K-Means to analyze a Kaggle dataset, demonstrating its effectiveness in identifying customer groups for personalized marketing strategies. Similarly, Arul et al. [@9725630] applied K-Means clustering to mall customer data, revealing insights that helped businesses improve targeted advertising and service offerings.
+Several studies illustrate the practical applications of K-Means clustering in e-commerce and retail. Agrawal et al. [@10105070] used a hybrid approach integrating the elbow method and K-Means clustering to analyze e-commerce data, demonstrating its effectiveness in identifying customer segments for personalized marketing. Arul et al. [@9725630] applied K-Means to mall customer data, providing insights that enhanced targeted advertising strategies.
 
-This study builds upon existing research by applying K-Means clustering to the `Online_Retail.xlsx` dataset, aiming to derive practical insights for customer segmentation. The next phase of the project will involve data preprocessing, exploratory analysis, and visualization to prepare the dataset for clustering.
+## Methods  
+
+### K-Means Clustering Algorithm  
+
+The K-Means clustering algorithm is an iterative approach used to group similar data points into clusters. The algorithm follows these steps:
+
+1. *Initialize Cluster Centers:* Randomly select `k` initial cluster centroids.
+2. *Assign Data Points:* Compute the Euclidean distance between each data point and the cluster centroids, assigning each point to the nearest cluster.
+3. *Update Cluster Centers:* Recalculate cluster centroids by computing the mean of all data points assigned to each cluster.
+4. *Iterate Until Convergence:* Repeat steps 2 and 3 until the cluster assignments remain unchanged or meet a predefined convergence threshold.
+
+This iterative process ensures that clusters are refined until an optimal grouping is achieved [@tabianan2022k].
+
+### Proximity Measures  
+
+K-Means clustering relies on proximity measures to determine cluster assignments. The most common measures include:
+
+- **Euclidean Distance:**
+
+$D_{euclidean}(x_1, x_2) = \sqrt{ \sum_{i=1}^{n} ((x_{1})_{i} - (x_{2})_{i})^2 }$
+
+
+- **Manhattan Distance:**
+
+$D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|$
+
+
+These measures influence how clusters are formed and the overall effectiveness of segmentation [@bradley2000constrained].
+
+
+## Analysis and Results  
+
+### Dataset Description
+
+The Online Retail dataset, sourced from the UCI Machine Learning Repository, contains transactional data from a UK-based e-commerce store. This store specializes in selling unique giftware, which is frequently purchased in bulk by customers. The dataset spans transactions recorded between December 1, 2009, and December 9, 2011. [@online_retail_352]
+
+This dataset is particularly useful for customer segmentation, sales analysis, and market trend evaluation. It includes eight attributes that provide insights into customer purchases, product details, and order quantities. The data can be leveraged for analyzing buying behaviors, identifying customer clusters, and predicting future sales trends.
+
+
+### Dataset Overview  
+The dataset contains transactional records from an online retail store. The key attributes in the dataset include:
+
+- `InvoiceNo`: Unique invoice number for transactions
+- `StockCode`: Product code
+- `Description`: Product name
+- `Quantity`: Quantity purchased
+- `InvoiceDate`: Date and time of the purchase
+- `UnitPrice`: Price per unit
+- `CustomerID`: Unique identifier for customers
+- `Country`: Country where the transaction occurred
+
+### Data Preprocessing  
+
+Before clustering, the dataset requires cleaning and transformation. The preprocessing steps include handling missing values, removing duplicates, and transforming categorical data where necessary.
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+library(tidyverse)
+library(readxl)
+library(DT)
+library(knitr)
+
+file_path <- "~/customer_segmentation_group_project/Online_Retail.xlsx"
+
+df <- read_excel(file_path)
+
+datatable(head(df))
+
+```
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+str(df)
+
+summary(df)
+
+colSums(is.na(df))
+```
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+
+df <- df %>% drop_na(CustomerID)
+
+# Verify missing values again
+colSums(is.na(df))
+
+```
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Remove canceled transactions
+df <- df %>% filter(!grepl("^C", InvoiceNo))
+
+# Remove invalid transactions
+df <- df %>% filter(Quantity > 0, UnitPrice > 0)
+
+```
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+
+library(ggplot2)
+
+# Top products by sales volume
+top_products <- df %>%
+  group_by(Description) %>%
+  summarise(TotalQuantity = sum(Quantity)) %>%
+  arrange(desc(TotalQuantity)) %>%
+  head(10)
+
+# Plot
+ggplot(top_products, aes(x = reorder(Description, TotalQuantity), y = TotalQuantity)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Top 10 Most Purchased Products",
+       x = "Product",
+       y = "Total Quantity") +
+  theme_minimal()
+
+ggplot(df, aes(x = UnitPrice)) +
+  geom_histogram(bins = 50, fill = "blue", color = "black", alpha = 0.7) +
+  scale_x_log10() +
+  labs(title = "Distribution of Unit Price (Log Scale)",
+       x = "Unit Price",
+       y = "Count") +
+  theme_minimal()
+
+# Compute total spending per customer
+customer_spending <- df %>%
+  group_by(CustomerID) %>%
+  summarise(TotalSpending = sum(Quantity * UnitPrice))
+
+# Plot spending distribution
+ggplot(customer_spending, aes(x = TotalSpending)) +
+  geom_histogram(bins = 50, fill = "purple", color = "black", alpha = 0.7) +
+  scale_x_log10() +
+  labs(title = "Distribution of Customer Spending (Log Scale)",
+       x = "Total Spending",
+       y = "Number of Customers") +
+  theme_minimal()
+
+
+# Count transactions per country
+country_sales <- df %>%
+  group_by(Country) %>%
+  summarise(Transactions = n()) %>%
+  arrange(desc(Transactions)) %>%
+  head(10)
+
+# Plot
+ggplot(country_sales, aes(x = reorder(Country, Transactions), y = Transactions, fill = Country)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = "Top 10 Countries by Number of Transactions",
+       x = "Country",
+       y = "Number of Transactions") +
+  theme_minimal()
+
+
+```
 
 
 ## References  
