@@ -45,6 +45,106 @@ Devaghi & Sudha [@10183143] emphasized the significance of exploratory data anal
 
 Several studies illustrate the practical applications of K-Means clustering in e-commerce and retail. Agrawal et al. [@10105070] used a hybrid approach integrating the elbow method and K-Means clustering to analyze e-commerce data, demonstrating its effectiveness in identifying customer segments for personalized marketing. Arul et al. [@9725630] applied K-Means to mall customer data, providing insights that enhanced targeted advertising strategies.
 
+
+## Methods  
+
+#### K-Means Clustering Algorithm  
+
+The **K-Means clustering algorithm** is an iterative approach for partitioning a dataset into `k` clusters. It follows these steps to achieve convergence:
+
+1. **Initialize Cluster Centers:**
+   - Select `k` initial cluster centroids randomly or use **K-Means++** for optimized placement.
+   - This ensures centroids are well-separated initially.
+
+2. **Assign Data Points:**
+   - Compute the **distance** between each data point and all centroids.
+   - Assign each data point to the nearest cluster based on a **proximity measure** (e.g., Euclidean distance).
+
+3. **Update Cluster Centers:**
+   - Recalculate the centroid of each cluster by computing the **mean** of all assigned points.
+   - The centroid can be defined using:
+     - **Mean Centroid**: Arithmetic mean (commonly used).
+     - **Median Centroid**: Median of points (useful for handling outliers).
+
+4. **Repeat Until Convergence:**
+   - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.
+   - The algorithm stops when cluster assignments remain stable or meet a convergence threshold [@tabianan2022k].
+
+#### Selection of `k` (Number of Clusters)  
+
+Choosing an appropriate number of clusters (`k`) is crucial. Some common methods include:
+
+- **Elbow Method:**
+  - Plots the **within-cluster sum of squares (WCSS)** for different `k` values.
+  - The optimal `k` is where the plot forms an "elbow" (point of diminishing returns).
+
+- **Silhouette Score:**
+  - Measures how well each point fits within its cluster compared to others.
+  - Higher values indicate better-defined clusters.
+
+- **Gap Statistic:**
+  - Compares clustering results against random data distributions.
+  - Helps determine if actual clusters exist in the dataset.
+
+#### Proximity Measures  
+
+K-Means clustering assigns points to clusters based on **distance metrics**. The most commonly used metrics are:
+
+- **Euclidean Distance (Most Common in K-Means)**:
+
+$$
+D_{euclidean}(x_1, x_2) = \sqrt{ \sum_{i=1}^{n} ((x_{1})_{i} - (x_{2})_{i})^2 }
+$$
+
+- **Manhattan Distance (Useful for Grid-Based Data)**:
+
+$$
+D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|
+$$
+
+Choosing an appropriate distance metric affects **cluster shape** and performance [@bradley2000constrained].
+
+<!--
+
+#### Algorithm Workflow  
+
+The process of clustering follows the iterative steps of initialization, assignment, and updating cluster centroids. The figure below illustrates how data points are assigned to cluster centers and updated iteratively.
+
+<center>![K-Means Clustering Process (Image Source: @bradley2000constrained)](image.png)</center>
+
+This image provides a conceptual representation of data points, centroids, and the clustering assignment step. It visualizes how centroids adjust iteratively to achieve convergence. 
+-->
+
+#### Mathematical Formulation  
+
+Given a dataset `D` with `n` data points and `k` clusters, the clustering process follows [@deng2020retracted]:
+
+1. Define initial centroids $( Z_j(I), j = 1, 2, ..., k )$
+2. Compute the distance $( D(x_i, Z_j(I)) )$ between each data point $( x_i )$ and cluster center $( Z_j )$.
+3. Assign $( x_i )$ to the cluster with the nearest centroid:
+
+$$
+D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
+$$
+
+4. Recalculate new cluster centers by minimizing the error square sum criterion:
+
+$$
+J = \sum_{j=1}^{k} \sum_{k=1}^{n_j} ||X_k^{(j)} - Z_j(I)||^2
+$$
+
+Where:
+
+- $( J )$ represents the total clustering variance.
+
+- $( X_k^{(j)} )$ are the data points assigned to cluster $( j )$.
+
+- $( Z_j(I) )$ are the centroids of clusters.
+
+This iterative process continues until convergence is reached, ensuring clusters are well-separated and compact.
+
+<!--
+
 ## Methods  
 
 ### K-Means Clustering Algorithm  
@@ -74,6 +174,7 @@ $D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|$
 
 These measures influence how clusters are formed and the overall effectiveness of segmentation [@bradley2000constrained].
 
+-->
 
 ## Analysis and Results  
 
@@ -105,104 +206,126 @@ library(tidyverse)
 library(readxl)
 library(DT)
 library(knitr)
+library(gtsummary)
+library(naniar)
+library(VIM)
+library(patchwork)
+
 
 file_path <- "~/customer_segmentation_group_project/Online_Retail.xlsx"
 
 df <- read_excel(file_path)
 
-datatable(head(df))
+
+kable(as.data.frame(head(df)), format = "html", caption = "1st few values of dataset")
 
 ```
 
 
 ```{r, warning=FALSE, echo=T, message=FALSE}
-str(df)
 
-summary(df)
+library(skimr)
+skim(df)
 
-colSums(is.na(df))
+
+
+
+# Aggregated missing values visualization
+aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = TRUE,
+     cex.axis = 0.8, cex.lab = 1.2, cex.numbers = 1.2)
+
+
+
 ```
 
 ```{r, warning=FALSE, echo=T, message=FALSE}
 
+# Remove NA transactions
 df <- df %>% drop_na(CustomerID)
 
-# Verify missing values again
-colSums(is.na(df))
-
-```
-
-```{r, warning=FALSE, echo=T, message=FALSE}
 # Remove canceled transactions
 df <- df %>% filter(!grepl("^C", InvoiceNo))
 
 # Remove invalid transactions
 df <- df %>% filter(Quantity > 0, UnitPrice > 0)
 
-```
-
-
-```{r, warning=FALSE, echo=T, message=FALSE}
-
 library(ggplot2)
 
-# Top products by sales volume
+# Top 10 most purchased products
 top_products <- df %>%
   group_by(Description) %>%
   summarise(TotalQuantity = sum(Quantity)) %>%
   arrange(desc(TotalQuantity)) %>%
   head(10)
 
-# Plot
-ggplot(top_products, aes(x = reorder(Description, TotalQuantity), y = TotalQuantity)) +
-  geom_bar(stat = "identity") +
+plot1 <- ggplot(top_products, aes(x = reorder(Description, TotalQuantity), y = TotalQuantity)) +
+  geom_bar(stat = "identity", fill = "gray") +
   coord_flip() +
-  labs(title = "Top 10 Most Purchased Products",
-       x = "Product",
-       y = "Total Quantity") +
-  theme_minimal()
+  labs(title = "Top 10 Most Purchased Products", x = "Product", y = "Total Quantity") +
+  theme_minimal(base_size = 14) +  # Increased font size
+  theme(plot.title = element_text(hjust = 0.5))  # Center title
 
-ggplot(df, aes(x = UnitPrice)) +
+print(plot1)
+```
+
+<b>Top 10 Most Purchased Products</b> – Understanding which products drive the most sales can help segment customers based on product preferences.
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+
+# Distribution of Unit Prices (Log Scale)
+plot2 <- ggplot(df, aes(x = UnitPrice)) +
   geom_histogram(bins = 50, fill = "blue", color = "black", alpha = 0.7) +
   scale_x_log10() +
-  labs(title = "Distribution of Unit Price (Log Scale)",
-       x = "Unit Price",
-       y = "Count") +
-  theme_minimal()
+  labs(title = "Distribution of Unit Price (Log Scale)", x = "Unit Price", y = "Count") +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5))
 
-# Compute total spending per customer
+print(plot2)
+```
+
+<b>Distribution of Unit Price (Log Scale)</b> – Price distribution analysis helps identify pricing trends and whether customers prefer budget or premium products.
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Distribution of Customer Spending (Log Scale)
 customer_spending <- df %>%
   group_by(CustomerID) %>%
   summarise(TotalSpending = sum(Quantity * UnitPrice))
 
-# Plot spending distribution
-ggplot(customer_spending, aes(x = TotalSpending)) +
+plot3 <- ggplot(customer_spending, aes(x = TotalSpending)) +
   geom_histogram(bins = 50, fill = "purple", color = "black", alpha = 0.7) +
   scale_x_log10() +
-  labs(title = "Distribution of Customer Spending (Log Scale)",
-       x = "Total Spending",
-       y = "Number of Customers") +
-  theme_minimal()
+  labs(title = "Distribution of Customer Spending (Log Scale)", x = "Total Spending", y = "Number of Customers") +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
-# Count transactions per country
-country_sales <- df %>%
+print(plot3)
+```
+
+<b>Distribution of Customer Spending (Log Scale)</b> – Segmenting customers based on their total spending allows for targeted marketing strategies (e.g., premium vs. budget shoppers).
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Top 10 Countries by Number of Transactions
+top_countries <- df %>%
   group_by(Country) %>%
   summarise(Transactions = n()) %>%
   arrange(desc(Transactions)) %>%
   head(10)
 
-# Plot
-ggplot(country_sales, aes(x = reorder(Country, Transactions), y = Transactions, fill = Country)) +
+plot4 <- ggplot(top_countries, aes(x = reorder(Country, Transactions), y = Transactions, fill = Country)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  labs(title = "Top 10 Countries by Number of Transactions",
-       x = "Country",
-       y = "Number of Transactions") +
-  theme_minimal()
+  labs(title = "Top 10 Countries by Number of Transactions", x = "Country", y = "Number of Transactions") +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
+print(plot4)
 ```
+
+<b>Top 10 Countries by Number of Transactions</b> – Identifying the most active regions helps in location-based segmentation and marketing optimization.
+
 
 
 ## References  
