@@ -3315,11 +3315,6 @@ window.Quarto = {
 <li><strong>Update Cluster Centers:</strong>
 <ul>
 <li>Recalculate the centroid of each cluster by computing the <strong>mean</strong> of all assigned points.</li>
-<li>The centroid can be defined using:
-<ul>
-<li><strong>Mean Centroid</strong>: Arithmetic mean (commonly used).</li>
-<li><strong>Median Centroid</strong>: Median of points (useful for handling outliers).</li>
-</ul></li>
 </ul></li>
 <li><strong>Repeat Until Convergence:</strong>
 <ul>
@@ -3330,14 +3325,7 @@ window.Quarto = {
 </section>
 <section id="selection-of-k-number-of-clusters" class="level4">
 <h4 class="anchored" data-anchor-id="selection-of-k-number-of-clusters">Selection of <code>k</code> (Number of Clusters)</h4>
-<p>Choosing an appropriate number of clusters (<code>k</code>) is crucial.</p>
-<ul>
-<li><strong>Elbow Method:</strong>
-<ul>
-<li>Plots the <strong>within-cluster sum of squares (WCSS)</strong> for different <code>k</code> values.</li>
-<li>The optimal <code>k</code> is where the plot forms an “elbow” (point of diminishing returns).</li>
-</ul></li>
-</ul>
+<p>The optimal number of clusters <code>k</code> is determined using the <strong>Elbow Method</strong>, which plots WCSS against <code>k</code> values. The elbow point—where the rate of decrease in WCSS diminishes—indicates the optimal <code>k</code>.</p>
 </section>
 <section id="proximity-measures" class="level4">
 <h4 class="anchored" data-anchor-id="proximity-measures">Proximity Measures</h4>

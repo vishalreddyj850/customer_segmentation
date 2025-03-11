@@ -62,9 +62,6 @@ The **K-Means clustering algorithm** is an iterative approach for partitioning a
 
 3. **Update Cluster Centers:**
    - Recalculate the centroid of each cluster by computing the **mean** of all assigned points.
-   - The centroid can be defined using:
-     - **Mean Centroid**: Arithmetic mean (commonly used).
-     - **Median Centroid**: Median of points (useful for handling outliers).
 
 4. **Repeat Until Convergence:**
    - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.
@@ -72,11 +69,7 @@ The **K-Means clustering algorithm** is an iterative approach for partitioning a
 
 #### Selection of `k` (Number of Clusters)  
 
-Choosing an appropriate number of clusters (`k`) is crucial.
-
-- **Elbow Method:**
-  - Plots the **within-cluster sum of squares (WCSS)** for different `k` values.
-  - The optimal `k` is where the plot forms an "elbow" (point of diminishing returns).
+The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS diminishes—indicates the optimal `k`.
 
 
 #### Proximity Measures  
