@@ -48,41 +48,66 @@ Several studies illustrate the practical applications of K-Means clustering in e
 
 ## Methods  
 
-#### K-Means Clustering Algorithm  
+### K-Means Clustering Algorithm  
 
 The **K-Means clustering algorithm** is an iterative approach for partitioning a dataset into `k` clusters. It follows these steps to achieve convergence:
 
-1. **Initialize Cluster Centers:**
-   - Select `k` initial cluster centroids randomly or use **K-Means++** for optimized placement.
+1. **Initialize Cluster Centers:**  
+   - Select `k` initial cluster centroids randomly or use **K-Means++** (K-Means++ is an improved initialization technique that places centroids far apart to enhance convergence and accuracy.) for optimized placement.  
    - This ensures centroids are well-separated initially.
 
-2. **Assign Data Points:**
-   - Compute the **distance** between each data point and all centroids.
-   - Assign each data point to the nearest cluster based on a **proximity measure** (e.g., Euclidean distance).
+2. **Assign Data Points:**  
+   - Compute the **distance** between each data point and all centroids.  
+   - Assign each data point to the nearest cluster based on a **proximity measure** (e.g., Euclidean distance).  
+   - The assignment is done by minimizing the distance:
 
-3. **Update Cluster Centers:**
-   - Recalculate the centroid of each cluster by computing the **mean** of all assigned points.
+$$
+D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
+$$
 
-4. **Repeat Until Convergence:**
-   - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.
-   - The algorithm stops when cluster assignments remain stable or meet a convergence threshold [@tabianan2022k].
+3. **Update Cluster Centers:**  
+   - Recalculate the centroid of each cluster by computing the **mean** of all assigned points:
 
-#### Selection of `k` (Number of Clusters)  
+$$
+Z_j(I) = \frac{1}{n_j} \sum_{k=1}^{n_j} X_k^{(j)}
+$$
 
-The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS diminishes—indicates the optimal `k`.
+Where:
+
+- $X_k^{(j)}$ are the data points assigned to cluster `j`.  
+- $Z_j(I)$ are the centroids of clusters.  
+
+4. **Repeat Until Convergence:**  
+   - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.  
+   - The algorithm stops when cluster assignments remain stable or meet a convergence threshold [@tabianan2022k].  
+   - The final clustering result aims to minimize the **error square sum criterion**:
+
+$$
+J = \sum_{j=1}^{k} \sum_{k=1}^{n_j} ||X_k^{(j)} - Z_j(I)||^2
+$$
+
+Where `J` represents the total clustering variance.
+
+![Flowchart of K-Means Clustering Algorithm](Flowchart-of-k-means-clustering-algorithm.png)
+
+*Figure: Flowchart of the K-Means Clustering Algorithm. Source: [@article]*
+
+### Selection of `k` (Number of Clusters)  
+
+The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS (Within-Cluster Sum of Squares (WCSS) is a measure of the variance within clusters. The elbow point—where the curve bends—indicates the optimal number of clusters.) diminishes—indicates the optimal `k`.
 
 
-#### Proximity Measures  
+### Proximity Measures  
 
 K-Means clustering assigns points to clusters based on **distance metrics**. The most commonly used metrics are:
 
-- **Euclidean Distance (Most Common in K-Means)**:
+- **Euclidean Distance (Most Common in K-Means):**
 
 $$
 D_{euclidean}(x_1, x_2) = \sqrt{ \sum_{i=1}^{n} ((x_{1})_{i} - (x_{2})_{i})^2 }
 $$
 
-- **Manhattan Distance (Useful for Grid-Based Data)**:
+- **Manhattan Distance (Useful for Grid-Based Data):**
 
 $$
 D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|
@@ -90,44 +115,6 @@ $$
 
 Choosing an appropriate distance metric affects **cluster shape** and performance [@bradley2000constrained].
 
-<!--
-
-#### Algorithm Workflow  
-
-The process of clustering follows the iterative steps of initialization, assignment, and updating cluster centroids. The figure below illustrates how data points are assigned to cluster centers and updated iteratively.
-
-<center>![K-Means Clustering Process (Image Source: @bradley2000constrained)](image.png)</center>
-
-This image provides a conceptual representation of data points, centroids, and the clustering assignment step. It visualizes how centroids adjust iteratively to achieve convergence. 
--->
-
-#### Mathematical Formulation  
-
-Given a dataset `D` with `n` data points and `k` clusters, the clustering process follows [@deng2020retracted]:
-
-1. Define initial centroids $( Z_j(I), j = 1, 2, ..., k )$
-2. Compute the distance $( D(x_i, Z_j(I)) )$ between each data point $( x_i )$ and cluster center $( Z_j )$.
-3. Assign $( x_i )$ to the cluster with the nearest centroid:
-
-$$
-D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
-$$
-
-4. Recalculate new cluster centers by minimizing the error square sum criterion:
-
-$$
-J = \sum_{j=1}^{k} \sum_{k=1}^{n_j} ||X_k^{(j)} - Z_j(I)||^2
-$$
-
-Where:
-
-- $( J )$ represents the total clustering variance.
-
-- $( X_k^{(j)} )$ are the data points assigned to cluster $( j )$.
-
-- $( Z_j(I) )$ are the centroids of clusters.
-
-This iterative process continues until convergence is reached, ensuring clusters are well-separated and compact.
 
 <!--
 
@@ -188,130 +175,233 @@ The dataset contains transactional records from an online retail store. The key 
 Before clustering, the dataset requires cleaning and transformation. The preprocessing steps include handling missing values, removing duplicates, and transforming categorical data where necessary.
 
 ```{r, warning=FALSE, echo=T, message=FALSE}
+# Data Manipulation and Cleaning
 library(tidyverse)
 library(readxl)
+
+# Visualization
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+
+# Data Exploration and Analysis
 library(DT)
 library(knitr)
 library(gtsummary)
 library(naniar)
 library(VIM)
-library(patchwork)
-library(ggplot2)
 library(skimr)
+
+# Clustering Analysis
 library(factoextra)
+library(cluster)
+library(clValid)
+library(NbClust)
 
-
+# Load Dataset
 file_path <- "~/customer_segmentation_group_project/Online_Retail.xlsx"
-
 df <- read_excel(file_path)
 
-
-kable(as.data.frame(head(df)), format = "html", caption = "1st few values of dataset")
+# Display sample rows
+kable(head(df), format = "html", caption = "First Few Records of the Dataset", table.attr = "class='table table-striped table-bordered'")
 
 ```
 
 
 ```{r, warning=FALSE, echo=T, message=FALSE}
-
+# Summary Statistics
 skim(df)
 
-# Aggregated missing values visualization
-aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = TRUE,
+# Visualizing Missing Values
+aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = FALSE,
      cex.axis = 0.8, cex.lab = 1.2, cex.numbers = 1.2)
-
-
 
 ```
 
-
-### Exploratory Data Analysis  
-
-1. **Top 10 Most Purchased Products**  
-2. **Distribution of Unit Prices (Log Scale)**  
-3. **Distribution of Customer Spending (Log Scale)**  
-4. **Top 10 Countries by Number of Transactions**  
-
+### Data Cleaning and Transformation
 
 ```{r}
-
 
 # Data Cleaning
 df <- df %>%
-  drop_na(CustomerID) %>%
+  filter(!is.na(CustomerID)) %>%
   filter(!grepl("^C", InvoiceNo)) %>%
   filter(Quantity > 0, UnitPrice > 0) %>%
-  mutate(TotalSpending = Quantity * UnitPrice)
+  mutate(TotalSpending = Quantity * UnitPrice) %>%
+  mutate(InvoiceDate = as.Date(InvoiceDate)) %>%
+  mutate(Description = replace_na(Description, "Unknown"))
 
-
-
-# Top 10 most purchased products
-top_products <- df %>%
-  group_by(Description) %>%
-  summarise(TotalQuantity = sum(Quantity)) %>%
-  arrange(desc(TotalQuantity)) %>%
-  head(10)
-
-ggplot(top_products, aes(x = reorder(Description, TotalQuantity), y = TotalQuantity)) +
-  geom_bar(stat = "identity", fill = "gray") +
-  coord_flip() +
-  labs(title = "Top 10 Most Purchased Products", x = "Product", y = "Total Quantity")
-
-# Distribution of Unit Prices
-ggplot(df, aes(x = UnitPrice)) +
-  geom_histogram(bins = 50, fill = "blue", color = "black") +
-  scale_x_log10() +
-  labs(title = "Distribution of Unit Price (Log Scale)", x = "Unit Price", y = "Count")
-
-# Distribution of Customer Spending
-customer_spending <- df %>%
-  group_by(CustomerID) %>%
-  summarise(TotalSpending = sum(TotalSpending))
-
-ggplot(customer_spending, aes(x = TotalSpending)) +
-  geom_histogram(bins = 50, fill = "purple", color = "black") +
-  scale_x_log10() +
-  labs(title = "Distribution of Customer Spending (Log Scale)", x = "Total Spending", y = "Number of Customers")
 ```
 
-### K-Means Clustering Analysis  
+### Exploratory Data Analysis  
 
-#### Selecting the Optimal `k` using the Elbow Method
+
+<!--1. **Top 10 Most Purchased Products**  
+2. **Distribution of Unit Prices (Log Scale)**  
+3. **Distribution of Customer Spending (Log Scale)**  
+4. **Top 10 Countries by Number of Transactions**  
+-->
+
+
 ```{r}
-# Customer Aggregation
+# Quantity Histogram
+quantity_plot <- df %>%
+  mutate(Quantity_Bins = cut(Quantity, breaks = c(-Inf, 1, 5, 10, 20, 30, 50, Inf))) %>%
+  count(Quantity_Bins) %>%
+  ggplot(aes(x = Quantity_Bins, y = n, fill = n)) +
+  geom_bar(stat = "identity") +
+  scale_fill_gradient(low = "blue", high = "darkblue") +
+  labs(title = "A: Quantity Histogram", x = "Quantity", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Price Histogram
+price_plot <- df %>%
+  mutate(Price_Bins = cut(UnitPrice, breaks = c(-Inf, 1, 2, 4, 6, 8, 10, 50, Inf))) %>%
+  count(Price_Bins) %>%
+  ggplot(aes(x = Price_Bins, y = n, fill = n)) +
+  geom_bar(stat = "identity") +
+  scale_fill_gradient(low = "blue", high = "darkblue") +
+  labs(title = "B: Price Histogram", x = "Price", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Top 5 StockCode
+top_stockcode <- df %>%
+  count(StockCode) %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  ggplot(aes(x = reorder(StockCode, -n), y = n, fill = StockCode)) +
+  geom_bar(stat = "identity") +
+  labs(title = "C: Top 5 StockCode", x = "StockCode", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Top 5 Countries
+top_countries <- df %>%
+  count(Country) %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  ggplot(aes(x = reorder(Country, -n), y = n, fill = Country)) +
+  geom_bar(stat = "identity") +
+  labs(title = "D: Top 5 Country", x = "Country", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Combine Plots
+(quantity_plot | price_plot) /
+(top_stockcode | top_countries)
+
+
+```
+
+### Outlier Detection and Handling
+
+
+```{r}
+# Outlier Removal Function
+remove_outliers <- function(data, column) {
+  Q1 <- quantile(data[[column]], 0.25)
+  Q3 <- quantile(data[[column]], 0.75)
+  IQR_value <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR_value
+  upper_bound <- Q3 + 1.5 * IQR_value
+  data %>% filter(data[[column]] >= lower_bound & data[[column]] <= upper_bound)
+}
+
+# Removing Outliers
+df <- df %>%
+  remove_outliers("Quantity") %>%
+  remove_outliers("UnitPrice")
+
+# RFM Analysis Data Preparation
 customer_data <- df %>%
   group_by(CustomerID) %>%
   summarise(
-    Recency = as.numeric(as.Date("2011-12-10") - max(as.Date(InvoiceDate))),
+    Recency = as.numeric(as.Date("2011-12-10") - max(InvoiceDate)),
     Frequency = n(),
     Monetary = sum(TotalSpending)
   )
 
-# Normalizing Data
-customer_data_scaled <- scale(customer_data[, -1])
+# Log Transformation
+customer_data_log <- customer_data %>%
+  mutate(
+    Frequency = log1p(Frequency),
+    Monetary = log1p(Monetary)
+  )
 
-# Elbow Method
-set.seed(42)
-fviz_nbclust(customer_data_scaled, kmeans, method = "wss") +
-  labs(title = "Elbow Method for Optimal k")
+# Standardizing Data for K-Means Clustering
+customer_data_scaled <- customer_data_log %>%
+  select(-CustomerID) %>%
+  scale()
+
+# Visualizing Transformed Data
+p1 <- ggplot(customer_data_log, aes(y = Recency)) + geom_boxplot(fill = "#4CAF50")
+p2 <- ggplot(customer_data_log, aes(y = Frequency)) + geom_boxplot(fill = "#FFC107")
+p3 <- ggplot(customer_data_log, aes(y = Monetary)) + geom_boxplot(fill = "#2196F3")
+
+grid.arrange(p1, p2, p3, ncol = 3)
+
 ```
 
+
+
+### K-Means Clustering Analysis  
+
+#### Finding Optimal k for Clustering
+
+###### Elbow Method
+
+```{r}
+set.seed(42)
+fviz_nbclust(customer_data_scaled, kmeans, method = "wss") +
+    geom_vline(xintercept = 3, linetype = 2)+
+  labs(subtitle = "Elbow Method")
+
+```
+
+
+<!--
+###### Silhouette Method
+
+```{r}
+set.seed(42)
+fviz_nbclust(customer_data_scaled, kmeans, method = "silhouette") +
+  labs(title = "Silhouette Method for Optimal k")
+```
+
+###### Gap Statistic
+
+```{r}
+set.seed(42)
+gap_stat <- clusGap(customer_data_scaled, nstart = 25, kmeans, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat) +
+  labs(title = "Gap Statistic for Optimal k")
+```
+-->
+
 #### Performing K-Means Clustering
+
 ```{r}
 # K-Means Clustering
+# Optimal k (based on visual inspection — best is k = 3)
 set.seed(42)
-k <- 4
+k <- 3
 kmeans_model <- kmeans(customer_data_scaled, centers = k, nstart = 25)
-customer_data$Cluster <- as.factor(kmeans_model$cluster)
+
+# Adding Cluster Labels
+customer_data_log$Cluster <- as.factor(kmeans_model$cluster)
 
 # Visualizing Clusters
 fviz_cluster(kmeans_model, data = customer_data_scaled) +
   labs(title = "Customer Segmentation using K-Means Clustering")
+
 ```
 
 ### Cluster Insights
 ```{r}
-# Cluster Summary
-cluster_summary <- customer_data %>%
+# Cluster Profiling
+cluster_summary <- customer_data_log %>%
   group_by(Cluster) %>%
   summarise(
     Avg_Recency = mean(Recency),
@@ -333,17 +423,15 @@ p3 <- ggplot(cluster_summary, aes(x = Cluster, y = Avg_Monetary)) +
   geom_bar(stat = "identity", fill = "#2196F3") +
   labs(title = "Average Monetary Value by Cluster")
 
-(p1 | p2 | p3)
+grid.arrange(p1, p2, p3, ncol = 3)
+
+# Final Cluster Summary Output
+kable(cluster_summary, format = "html", caption = "First Few Records of the Dataset", table.attr = "class='table table-striped table-bordered'")
+
 ```
 
-## Results and Discussion  
+### Results 
 
-The analysis reveals clear customer segments with distinct behavior patterns. The key observations include:
-
-- **Cluster 3** represents high-value customers with frequent purchases and significant monetary value.
-- **Cluster 1** includes inactive customers with minimal recent purchases.
-- **Cluster 4** exhibits moderate spending behavior, suggesting opportunities for increased engagement.
-- **Cluster 2** reflects regular buyers with consistent purchase behavior.
 
 ### Conclusion  
 The K-Means clustering algorithm successfully identified distinct customer segments, providing actionable insights for targeted marketing strategies.
