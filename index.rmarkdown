@@ -1,0 +1,498 @@
+---
+title: "Customer Segmentation for E-commerce using K-means Clustering"
+author:
+  - Vishal Reddy Jakkareddy
+  - PruthviRaj Amgoth
+date: '`r Sys.Date()`'
+format:
+  html:
+    theme: flatly
+    toc: true           
+    toc-depth: 3
+    link-external-icon: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    code-overflow: wrap
+    code-fold: show
+    css: styles.css
+    number-sections: true
+course: Capstone Projects in Data Science
+bibliography: references.bib
+indent: true
+execute: 
+  warning: false
+  message: false
+
+---
+
+
+------
+
+
+Slides: [slides.html](slides.html){target="_blank"} ( Go to `slides.qmd`
+to edit)
+
+
+------
+
+
+## Introduction  
+
+Customer segmentation is an essential strategy in e-commerce that allows businesses to classify customers based on purchasing behaviors, enabling targeted marketing efforts and customer retention strategies. Traditional segmentation relied on demographic attributes, but with advancements in machine learning, data-driven approaches such as K-Means clustering have become widely adopted. This study leverages K-Means clustering to analyze an online retail dataset and identify distinct customer groups based on their purchase behaviors.
+
+Recent research has highlighted the advantages of clustering algorithms in segmenting customers effectively. K-Means clustering remains a popular choice due to its efficiency and ease of implementation [@paramita2024comparison]. Alternative methods such as K-Medoids and DBSCAN have also been explored, showing advantages in handling noise and varying cluster densities [@wu2022research]. This study applies K-Means clustering using R to segment customers from an online retail dataset, enabling a data-driven approach to customer analysis and decision-making.
+
+### Literature Review  
+
+#### K-Means Clustering in E-Commerce  
+
+The effectiveness of K-Means clustering for customer segmentation has been demonstrated in various studies. Tabianan et al. [@tabianan2022k] implemented the K-Means algorithm on a Malaysian e-commerce dataset, improving clustering accuracy by incorporating SAPK. Similarly, Rajput & Singh [@10048834] analyzed session length, time spent on mobile and web platforms, and yearly spending to determine optimal customer segmentation using the elbow method.
+
+
+#### Optimizing K-Means Clustering  
+
+Bradley et al. [@bradley2000constrained] introduced a constrained K-Means algorithm, which ensures a minimum number of points per cluster, improving the stability of segmentation. Kanungo et al. [@10.1145/336154.336189] proposed a filtering algorithm that optimizes K-Means clustering by using kd-trees, enhancing efficiency in large datasets.
+
+Devaghi & Sudha [@10183143] emphasized the significance of exploratory data analysis (EDA) combined with K-Means clustering for customer segmentation, highlighting the need for robust data preprocessing and feature selection.
+
+#### Real-World Applications  
+
+Several studies illustrate the practical applications of K-Means clustering in e-commerce and retail. Agrawal et al. [@10105070] used a hybrid approach integrating the elbow method and K-Means clustering to analyze e-commerce data, demonstrating its effectiveness in identifying customer segments for personalized marketing. Arul et al. [@9725630] applied K-Means to mall customer data, providing insights that enhanced targeted advertising strategies.
+
+
+
+## Methods  
+
+### K-Means Clustering Algorithm  
+
+The **K-Means clustering algorithm** is an iterative approach for partitioning a dataset into `k` clusters. It follows these steps to achieve convergence:
+
+1. **Initialize Cluster Centers:**  
+   - Select `k` initial cluster centroids randomly or use **K-Means++** (K-Means++ is an improved initialization technique that places centroids far apart to enhance convergence and accuracy.) for optimized placement.  
+   - This ensures centroids are well-separated initially.
+
+2. **Assign Data Points:**  
+   - Compute the **distance** between each data point and all centroids.  
+   - Assign each data point to the nearest cluster based on a **proximity measure** (e.g., Euclidean distance).  
+   - The assignment is done by minimizing the distance:
+
+$$
+D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
+$$
+
+3. **Update Cluster Centers:**  
+   - Recalculate the centroid of each cluster by computing the **mean** of all assigned points:
+
+$$
+Z_j(I) = \frac{1}{n_j} \sum_{k=1}^{n_j} X_k^{(j)}
+$$
+
+Where:
+
+- $X_k^{(j)}$ are the data points assigned to cluster `j`.  
+- $Z_j(I)$ are the centroids of clusters.  
+
+4. **Repeat Until Convergence:**  
+   - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.  
+   - The algorithm stops when cluster assignments remain stable or meet a convergence threshold [@tabianan2022k].  
+   - The final clustering result aims to minimize the **error square sum criterion**:
+
+$$
+J = \sum_{j=1}^{k} \sum_{k=1}^{n_j} ||X_k^{(j)} - Z_j(I)||^2
+$$
+
+Where `J` represents the total clustering variance.
+
+
+### Selection of `k` (Number of Clusters)  
+
+The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS (Within-Cluster Sum of Squares (WCSS) is a measure of the variance within clusters. The elbow point—where the curve bends—indicates the optimal number of clusters.) diminishes—indicates the optimal `k`.
+
+
+### Proximity Measures  
+
+K-Means clustering assigns points to clusters based on **distance metrics**. The most commonly used metrics are:
+
+- **Euclidean Distance (Most Common in K-Means):**
+
+$$
+D_{euclidean}(x_1, x_2) = \sqrt{ \sum_{i=1}^{n} ((x_{1})_{i} - (x_{2})_{i})^2 }
+$$
+
+- **Manhattan Distance (Useful for Grid-Based Data):**
+
+$$
+D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|
+$$
+
+Choosing an appropriate distance metric affects **cluster shape** and performance [@bradley2000constrained].
+
+
+
+
+## Analysis and Results  
+
+### Dataset Description
+
+The Online Retail dataset, sourced from the UCI Machine Learning Repository, contains transactional data from a UK-based e-commerce store. This store specializes in selling unique giftware, which is frequently purchased in bulk by customers. The dataset spans transactions recorded between December 1, 2009, and December 9, 2011. [@online_retail_352]
+
+This dataset is particularly useful for customer segmentation, sales analysis, and market trend evaluation. It includes eight attributes that provide insights into customer purchases, product details, and order quantities. The data can be leveraged for analyzing buying behaviors, identifying customer clusters, and predicting future sales trends.
+
+
+### Dataset Overview  
+
+The dataset contains transactional records from an online retail store. The key attributes in the dataset include:
+
+- `InvoiceNo`: Unique invoice number for transactions
+- `StockCode`: Product code
+- `Description`: Product name
+- `Quantity`: Quantity purchased
+- `InvoiceDate`: Date and time of the purchase
+- `UnitPrice`: Price per unit
+- `CustomerID`: Unique identifier for customers
+- `Country`: Country where the transaction occurred
+
+### Data Preprocessing  
+
+Before clustering, the dataset requires cleaning and transformation. The preprocessing steps include handling missing values, removing duplicates, and transforming categorical data where necessary.
+
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Data Manipulation and Cleaning
+library(tidyverse)
+library(readxl)
+
+# Visualization
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+library(ggpubr)
+
+# Data Exploration and Analysis
+library(DT)
+library(knitr)
+library(gtsummary)
+library(naniar)
+library(VIM)
+library(skimr)
+
+# Clustering Analysis
+library(factoextra)
+library(cluster)
+library(clValid)
+library(NbClust)
+
+# Load Dataset
+file_path <- "~/customer_segmentation_group_project/Online_Retail.xlsx"
+df <- read_excel(file_path)
+
+# Display sample rows
+kable(head(df), format = "html", caption = "First Few Records of the Dataset", table.attr = "class='table table-striped table-bordered'")
+
+```
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Summary Statistics
+skim(df)
+```
+
+
+
+The dataset has 541,909 rows and 8 columns. `CustomerID` has 135,080 missing values (25% missing rate), and `Description` has 1,454 missing values. `Quantity` and `UnitPrice` show extreme values (e.g., negative quantities, very high prices), indicating the need for cleaning.
+
+
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# Visualizing Missing Values
+aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = FALSE,
+     cex.axis = 0.8, cex.lab = 1.2, cex.numbers = 1.2, main = "Missing Data Visualization")
+
+```
+
+
+
+The visualization shows that `CustomerID` has the highest proportion of missing values (0.25), often paired with missing `Description` values (0.01 proportion of combinations).
+
+### Data Cleaning and Transformation
+
+
+
+```{r}
+
+# Data Cleaning
+df <- df %>%
+  filter(!is.na(CustomerID)) %>%
+  filter(!grepl("^C", InvoiceNo)) %>%
+  filter(Quantity > 0, UnitPrice > 0) %>%
+  mutate(TotalSpending = Quantity * UnitPrice) %>%
+  mutate(InvoiceDate = as.Date(InvoiceDate)) %>%
+  mutate(Description = replace_na(Description, "Unknown"))
+
+```
+
+
+
+
+This reduces the dataset to valid transactions, removing 135,080 rows with missing CustomerID, cancelled transactions (starting with "C"), and entries with non-positive Quantity or UnitPrice.
+
+
+
+### Exploratory Data Analysis  
+
+
+EDA provides insights into the dataset’s distributions and patterns.
+
+
+
+
+```{r}
+# Quantity Histogram
+quantity_plot <- df %>%
+  mutate(Quantity_Bins = cut(Quantity, breaks = c(-Inf, 1, 5, 10, 20, 30, 50, Inf))) %>%
+  count(Quantity_Bins) %>%
+  ggplot(aes(x = Quantity_Bins, y = n, fill = n)) +
+  geom_bar(stat = "identity") +
+  scale_fill_gradient(low = "blue", high = "darkblue") +
+  labs(title = "A: Quantity Histogram", x = "Quantity", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Price Histogram
+price_plot <- df %>%
+  mutate(Price_Bins = cut(UnitPrice, breaks = c(-Inf, 1, 2, 4, 6, 8, 10, 50, Inf))) %>%
+  count(Price_Bins) %>%
+  ggplot(aes(x = Price_Bins, y = n, fill = n)) +
+  geom_bar(stat = "identity") +
+  scale_fill_gradient(low = "blue", high = "darkblue") +
+  labs(title = "B: Price Histogram", x = "Price", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Top 5 StockCode
+top_stockcode <- df %>%
+  count(StockCode) %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  ggplot(aes(x = reorder(StockCode, -n), y = n, fill = StockCode)) +
+  geom_bar(stat = "identity") +
+  labs(title = "C: Top 5 StockCode", x = "StockCode", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Top 5 Countries
+top_countries <- df %>%
+  count(Country) %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  ggplot(aes(x = reorder(Country, -n), y = n, fill = Country)) +
+  geom_bar(stat = "identity") +
+  labs(title = "D: Top 5 Country", x = "Country", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Combine Plots
+(quantity_plot | price_plot) /
+(top_stockcode | top_countries)
+
+
+```
+
+
+
+- **Quantity Histogram (A):** Most transactions involve quantities between 1 and 5, with a right-skewed distribution.
+- **Price Histogram (B):** Most items are priced between 1 and 4 units, also right-skewed.
+- **Top 5 StockCode (C):** StockCode `85123A` has the highest sales count (~2,000 transactions).
+- **Top 5 Countries (D):** The United Kingdom dominates with over 300,000 transactions, followed by EIRE, France, Germany, and Spain.
+
+
+### RFM Analysis and Data Preparation
+
+RFM analysis quantifies customer behavior using three metrics:
+
+- **Recency:** Days since the last purchase (relative to December 10, 2011).
+- **Frequency:** Number of transactions per customer.
+- **Monetary:** Total spending per customer.
+
+
+
+
+```{r}
+# Outlier Removal Function
+remove_outliers <- function(data, column) {
+  Q1 <- quantile(data[[column]], 0.25)
+  Q3 <- quantile(data[[column]], 0.75)
+  IQR_value <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR_value
+  upper_bound <- Q3 + 1.5 * IQR_value
+  data %>% filter(data[[column]] >= lower_bound & data[[column]] <= upper_bound)
+}
+
+# Removing Outliers
+df <- df %>%
+  remove_outliers("Quantity") %>%
+  remove_outliers("UnitPrice")
+
+# RFM Analysis Data Preparation
+customer_data <- df %>%
+  group_by(CustomerID) %>%
+  summarise(
+    Recency = as.numeric(as.Date("2011-12-10") - max(InvoiceDate)),
+    Frequency = n(),
+    Monetary = sum(TotalSpending)
+  )
+
+# Log Transformation
+customer_data_log <- customer_data %>%
+  mutate(
+    Frequency = log1p(Frequency),
+    Monetary = log1p(Monetary)
+  )
+
+# Standardizing Data for K-Means Clustering
+customer_data_scaled <- customer_data_log %>%
+  select(-CustomerID) %>%
+  scale()
+
+# Visualizing Transformed Data
+p1 <- ggplot(customer_data_log, aes(y = Recency)) + geom_boxplot(fill = "#4CAF50")
+p2 <- ggplot(customer_data_log, aes(y = Frequency)) + geom_boxplot(fill = "#FFC107")
+p3 <- ggplot(customer_data_log, aes(y = Monetary)) + geom_boxplot(fill = "#2196F3")
+
+grid.arrange(p1, p2, p3, ncol = 3)
+
+```
+
+
+
+- Outliers in `Recency`, `Frequency`, and `Monetary` are removed using the IQR method.
+- Log transformation (`log1p`) reduces skewness in the RFM metrics.
+- Data is scaled to ensure equal weighting of features during clustering.
+
+The boxplots show that after transformation, the distributions are more symmetric, though some outliers remain (e.g., high `Monetary` values).
+
+
+### K-Means Clustering Analysis  
+
+#### Determining Optimal k
+
+
+
+```{r}
+# Elbow Method
+set.seed(42)
+fviz_nbclust(customer_data_scaled, kmeans, method = "wss") +
+  geom_vline(xintercept = 3, linetype = 2) +
+  labs(subtitle = "Elbow Method")
+
+```
+
+
+
+In this step, we are using the **Elbow Method** to determine the optimal number of clusters (`k`) for K-Means clustering. The plot displays the **Total Within Sum of Squares (WSS)** for different values of `k`, and we observe how the WSS decreases as the number of clusters increases. In our case, the elbow clearly appears at **k = 3**, meaning that three clusters provide the best segmentation of the data without overfitting. Choosing more than three clusters would result in only marginal improvement while increasing complexity unnecessarily.
+
+
+#### Applying K-Means Clustering
+
+
+
+```{r}
+# K-Means Clustering
+set.seed(42)
+kmeans_model <- kmeans(customer_data_scaled, centers = 3, nstart = 25)
+
+# Add Cluster Labels
+customer_data_log$Cluster <- as.factor(kmeans_model$cluster)
+
+# Visualize Clusters
+fviz_cluster(kmeans_model, 
+             data = customer_data_scaled, 
+             geom = "point",          
+             show.clust.cent = TRUE, 
+             ellipse.type = "convex",
+             palette = "jco") +
+  labs(title = "Customer Segmentation using K-Means Clustering")
+
+```
+
+
+The visualization shows three distinct clusters, with some overlap between clusters 2 and 3. Dim1 (73%) and Dim2 (22%) capture most of the variance, indicating effective dimensionality reduction.
+
+#### Cluster Profiling
+
+
+
+```{r}
+# Cluster Summary
+cluster_summary <- customer_data_log %>%
+  group_by(Cluster) %>%
+  summarise(
+    Avg_Recency = mean(Recency),
+    Avg_Frequency = mean(Frequency),
+    Avg_Monetary = mean(Monetary),
+    Total_Customers = n()
+  )
+
+# Visualize Cluster Characteristics with Adjusted Margins
+p1 <- ggplot(cluster_summary, aes(x = Cluster, y = Avg_Recency, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Recency by Cluster", y = "Avg. Recency") +
+  scale_fill_manual(values = c("#4CAF50", "#FFC107", "#2196F3")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, margin = margin(b = 10)),
+        plot.margin = margin(t = 20, r = 10, b = 10, l = 10))
+
+p2 <- ggplot(cluster_summary, aes(x = Cluster, y = Avg_Frequency, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Frequency by Cluster", y = "Avg. Frequency") +
+  scale_fill_manual(values = c("#4CAF50", "#FFC107", "#2196F3")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, margin = margin(b = 10)),
+        plot.margin = margin(t = 20, r = 10, b = 10, l = 10))
+
+p3 <- ggplot(cluster_summary, aes(x = Cluster, y = Avg_Monetary, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Monetary Value by Cluster", y = "Avg. Monetary") +
+  scale_fill_manual(values = c("#4CAF50", "#FFC107", "#2196F3")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, margin = margin(b = 10)),
+        plot.margin = margin(t = 20, r = 10, b = 10, l = 10))
+
+# Use ggarrange for better layout control
+ggarrange(p1, p2, p3, ncol = 3, common.legend = TRUE, legend = "right")
+
+# Display Cluster Summary
+kable(cluster_summary, format = "html", caption = "Cluster Summary", table.attr = "class='table table-striped table-bordered'")
+
+```
+
+
+
+#### Insights 
+
+- **Cluster 1 (Green):** Moderate recency (~57 days), low frequency (~3 transactions), and moderate spending (~5.56 log units). These are occasional buyers.
+- **Cluster 2 (Yellow):** Low recency (~37 days), high frequency (~4.78 transactions), and high spending (~7.33 log units). These are loyal, high-value customers.
+- **Cluster 3 (Blue):** High recency (~256 days), low frequency (~2.60 transactions), and low spending (~5.13 log units). These are inactive customers at risk of churn.
+
+### Results 
+
+K-Means clustering identified three customer segments:
+
+1. **Occasional Buyers (Cluster 1):** Customers who purchase infrequently with moderate spending.
+2. **Loyal Customers (Cluster 2):** Frequent buyers with high spending, ideal for retention strategies.
+3. **Inactive Customers (Cluster 3):** Customers who haven’t purchased recently, requiring re-engagement campaigns.
+
+These segments enable targeted marketing: loyalty programs for Cluster 2, re-engagement offers for Cluster 3, and promotional deals for Cluster 1.
+
+This study demonstrates the effectiveness of K-Means clustering for customer segmentation in e-commerce. By applying RFM analysis and K-Means clustering to the Online Retail dataset, we identified three distinct customer segments with actionable insights for marketing strategies. Future work could explore alternative clustering methods (e.g., DBSCAN) or incorporate additional features like product categories to enhance segmentation.
+
+
+
+
+## References  
+
+
+
+```{r references, echo=FALSE}
+# Include references from the bibliography file
+```
