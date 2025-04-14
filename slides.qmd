@@ -126,7 +126,7 @@ $$
 $$
 
 <center>
-<img src="kmeans_step4.png">
+<img src="elbow_method.webp">
 <p style="font-size: small; text-align: center;">Elbow Method (Image Source: <a href="https://medium.com/analytics-vidhya/an-unsupervised-scenario-with-k-means-algorithm-5312fee552b8" target="_blank">Soumo Chatterjee</a>)</p>
 </center>
 ---
