@@ -387,7 +387,8 @@ fviz_cluster(kmeans_model,
   labs(title = "Customer Segmentation using K-Means Clustering")
 
 ```
-The visualization shows three distinct clusters, with some overlap between clusters 2 and 3. Dim1 (73%) and Dim2 (22%) capture most of the variance, indicating effective dimensionality reduction.
+
+The visualization illustrates the results of a K-Means clustering algorithm applied to customer data, projected onto two principal components—Dim1 and Dim2—which together capture approximately 95.6% of the total variance (Dim1: 73.3%, Dim2: 22.3%). The plot reveals three distinct customer segments, each represented by a unique color and shape: Cluster 1 (blue circles), Cluster 2 (yellow triangles), and Cluster 3 (grey squares). The separation between clusters is generally clear, indicating well-defined groupings; however, there is a slight overlap between Clusters 2 and 3, suggesting the possibility of similar behaviors or characteristics among customers near the boundary. This dimensionality reduction has proven effective, as most of the important information in the dataset is retained in just two dimensions, allowing for clear interpretation and visual segmentation of the customer base. These insights can be valuable for targeted marketing, personalized services, or strategic business decisions.
 
 #### Cluster Profiling
 

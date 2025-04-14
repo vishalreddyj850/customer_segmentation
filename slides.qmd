@@ -7,7 +7,7 @@ author:
 date: '`r Sys.Date()`'
 format:
   revealjs:
-    theme: moon
+    theme: default
     smaller: true
     scrollable: true
     link-external-icon: true
@@ -53,6 +53,14 @@ The **K-Means clustering algorithm** is an iterative approach for partitioning a
    - Select `k` initial cluster centroids randomly or use **K-Means++** (K-Means++ is an improved initialization technique that places centroids far apart to enhance convergence and accuracy.) for optimized placement.  
    - This ensures centroids are well-separated initially.
 
+
+<center>
+<img src="kmeans_step1.png">
+<p style="font-size: small; text-align: center;">Initialize Cluster Centers (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
+</center>
+
+---
+
 2. **Assign Data Points:**  
    - Compute the **distance** between each data point and all centroids.  
    - Assign each data point to the nearest cluster based on a **proximity measure** (e.g., Euclidean distance).  
@@ -61,6 +69,11 @@ The **K-Means clustering algorithm** is an iterative approach for partitioning a
 $$
 D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
 $$
+<center>
+<img src="kmeans_step2.png">
+<p style="font-size: small; text-align: center;">Assign Data Points (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
+</center>
+
 ---
 
 3. **Update Cluster Centers:**  
@@ -75,6 +88,14 @@ Where:
 - $X_k^{(j)}$ are the data points assigned to cluster `j`.  
 - $Z_j(I)$ are the centroids of clusters.  
 
+<center>
+<img src="kmeans_step3.png">
+<p style="font-size: small; text-align: center;">Update Cluster Centers (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
+</center>
+
+
+---
+
 4. **Repeat Until Convergence:**  
    - Steps 2 and 3 are repeated iteratively until **no significant change** occurs in the centroids.  
    - The algorithm stops when cluster assignments remain stable or meet a convergence threshold [@tabianan2022k].  
@@ -86,12 +107,28 @@ $$
 
 Where `J` represents the total clustering variance.
 
+
+<center>
+<img src="kmeans_step4.png">
+<p style="font-size: small; text-align: center;">Repeat Until Convergence (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
+</center>
+
 ---
 
 ### Selection of `k` (Number of Clusters)
 
 The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS (Within-Cluster Sum of Squares (WCSS) is a measure of the variance within clusters. The elbow point—where the curve bends—indicates the optimal number of clusters.) diminishes—indicates the optimal `k`.
 
+<p style="font-size: small; text-align: center;">How to calculate WCSS when k=3</p>
+
+$$
+\text{WCSS} = \sum_{P_i \in \text{Cluster 1}} \text{distance}(P_i, C_1)^2 + \sum_{P_i \in \text{Cluster 2}} \text{distance}(P_i, C_2)^2 + \sum_{P_i \in \text{Cluster 3}} \text{distance}(P_i, C_3)^2
+$$
+
+<center>
+<img src="kmeans_step4.png">
+<p style="font-size: small; text-align: center;">Elbow Method (Image Source: <a href="https://medium.com/analytics-vidhya/an-unsupervised-scenario-with-k-means-algorithm-5312fee552b8" target="_blank">Soumo Chatterjee</a>)</p>
+</center>
 ---
 
 ### Proximity Measures 
@@ -187,7 +224,9 @@ aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = FALSE,
 
 ```
 
-The visualization shows that `CustomerID` has the highest proportion of missing values (0.25), often paired with missing `Description` values (0.01 proportion of combinations).
+The visualization illustrates the results of a K-Means clustering algorithm applied to customer data, projected onto two principal components—Dim1 and Dim2—which together capture approximately 95.6% of the total variance (Dim1: 73.3%, Dim2: 22.3%). The plot reveals three distinct customer segments, each represented by a unique color and shape: Cluster 1 (blue circles), Cluster 2 (yellow triangles), and Cluster 3 (grey squares). The separation between clusters is generally clear, indicating well-defined groupings; however, there is a slight overlap between Clusters 2 and 3, suggesting the possibility of similar behaviors or characteristics among customers near the boundary. This dimensionality reduction has proven effective, as most of the important information in the dataset is retained in just two dimensions, allowing for clear interpretation and visual segmentation of the customer base. These insights can be valuable for targeted marketing, personalized services, or strategic business decisions.
+
+<small>Dim1 and Dim2 are principal components resulting from a dimensionality reduction technique</small>
 
 ### Data Cleaning and Transformation
 
