@@ -67,6 +67,14 @@ The **K-Means clustering algorithm** is an iterative approach for partitioning a
 $$
 D(x_i, Z_k(I)) = \min D(x_i, Z_j(I)), j = 1, 2, ..., k
 $$
+<small>
+
+- $x_i$ represents a data point.
+- $D(x_i, Z_j^{(I)})$ represents the distance between the data point $x_i$ and the cluster centroid $Z_j^{(I)}$.
+- $k$ is the number of clusters.
+
+</small>
+
 <center>
 <img src="kmeans_step2.png">
 <p style="font-size: small; text-align: center;">Assign Data Points (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
@@ -117,11 +125,23 @@ Where `J` represents the total clustering variance.
 
 The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS (Within-Cluster Sum of Squares (WCSS) is a measure of the variance within clusters. The elbow point—where the curve bends—indicates the optimal number of clusters.) diminishes—indicates the optimal `k`.
 
-<p style="font-size: small; text-align: center;">How to calculate WCSS when k=3</p>
+$$
+\text{WCSS} = \sum_{x_k \in Z_1^{(I)}} \text{distance}(x_k^{(j)}, z_1^{(I)})^2
++ \sum_{x_k \in Z_2^{(I)}} \text{distance}(x_k^{(j)}, z_2^{(I)})^2
++ \sum_{x_k \in Z_3^{(I)}} \text{distance}(x_k^{(j)}, z_3^{(I)})^2
++ \cdots
+$$
 
-$$
-\text{WCSS} = \sum_{P_i \in \text{Cluster 1}} \text{distance}(P_i, C_1)^2 + \sum_{P_i \in \text{Cluster 2}} \text{distance}(P_i, C_2)^2 + \sum_{P_i \in \text{Cluster 3}} \text{distance}(P_i, C_3)^2
-$$
+<small>
+
+Where:
+
+- $(x_k^{(j)})$: A data point in cluster $(j)$
+- $(z_j^{(I)})$: The centroid of cluster $(j)$
+- $(Z_j^{(I)})$: The set of points in cluster $(j)$
+
+</small>
+
 
 <center>
 <img src="elbow_method.webp">
