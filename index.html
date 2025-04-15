@@ -268,6 +268,12 @@ Z_j(I) = \frac{1}{n_j} \sum_{k=1}^{n_j} X_k^{(j)}
 J = \sum_{j=1}^{k} \sum_{k=1}^{n_j} ||X_k^{(j)} - Z_j(I)||^2
 \]</span></p>
 <p>Where <code>J</code> represents the total clustering variance.</p>
+<center>
+<img src="kmeans_steps.webp">
+<p style="font-size: small; text-align: center;">
+K-Means Clustering Algorithm (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)
+</p>
+</center>
 </section>
 <section id="selection-of-k-number-of-clusters" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="selection-of-k-number-of-clusters"><span class="header-section-number">2.2</span> Selection of <code>k</code> (Number of Clusters)</h3>
@@ -887,6 +893,7 @@ D_{manhattan}(x_1, x_2) = \sum_{i=1}^{n} |((x_{1})_{i} - (x_{2})_{i})|
 </section>
 <section id="cluster-profiling" class="level4" data-number="3.7.3">
 <h4 data-number="3.7.3" class="anchored" data-anchor-id="cluster-profiling"><span class="header-section-number">3.7.3</span> Cluster Profiling</h4>
+<p>Cluster Profiling is the process of analyzing the characteristics of different customer segments after applying a clustering algorithm (like K-means). It helps us understand the behavior and value of each group, making it easier to tailor marketing strategies and business decisions. In this analysis, we’ve grouped customers into three clusters based on their Recency, Frequency, and Monetary values (RFM analysis). We then calculated the average values of these metrics for each cluster to interpret their purchasing behavior. By visualizing these summaries, we can clearly identify which clusters contain loyal customers, occasional buyers, or those at risk of churn—allowing businesses to take targeted actions accordingly.</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>

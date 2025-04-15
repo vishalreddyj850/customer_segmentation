@@ -1,9 +1,7 @@
 ---
 title: "K-means Clustering"
 subtitle: "Customer Segmentation for E-commerce"
-author:
-  - Vishal Reddy Jakkareddy (Advisor: Dr. Cohen)
-  - PruthviRaj Amgoth (Advisor: Dr. Cohen)
+author: "Vishal Reddy Jakkareddy & PruthviRaj Amgoth (Advisor: Dr. Cohen)"
 date: '`r Sys.Date()`'
 format:
   revealjs:
@@ -153,10 +151,12 @@ Choosing an appropriate distance metric affects **cluster shape** and performanc
 
 ## Data Exploration and Visualization
 
+::: {.panel-tabset}
+
+### About Source
+
 - The Online Retail dataset, sourced from the UCI Machine Learning Repository, contains transactional data from a UK-based e-commerce store. This store specializes in selling unique giftware, which is frequently purchased in bulk by customers. The dataset spans transactions recorded between December 1, 2009, and December 9, 2011. [@online_retail_352]
 - This dataset is particularly useful for customer segmentation, sales analysis, and market trend evaluation. It includes eight attributes that provide insights into customer purchases, product details, and order quantities. The data can be leveraged for analyzing buying behaviors, identifying customer clusters, and predicting future sales trends.
-
---- 
 
 ### Dataset Overview  
 
@@ -171,11 +171,9 @@ The dataset contains transactional records from an online retail store. The key 
 - `CustomerID`: Unique identifier for customers
 - `Country`: Country where the transaction occurred
 
+### Dataset
 
-## Modeling and Results
-
-
-```{r, warning=FALSE, echo=T, message=FALSE}
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
 # Data Manipulation and Cleaning
 library(tidyverse)
 library(readxl)
@@ -208,53 +206,37 @@ df <- read_excel(file_path)
 kable(head(df), format = "html", caption = "First Few Records of the Dataset", table.attr = "class='table table-striped table-bordered'")
 
 ```
+:::
 
+---
 
-```{r, warning=FALSE, echo=T, message=FALSE}
+### Exploratory Data Analysis
+
+::: {.panel-tabset}
+
+### Summary
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
 # Summary Statistics
 skim(df)
 ```
 
 The dataset has 541,909 rows and 8 columns. `CustomerID` has 135,080 missing values (25% missing rate), and `Description` has 1,454 missing values. `Quantity` and `UnitPrice` show extreme values (e.g., negative quantities, very high prices), indicating the need for cleaning.
 
-```{r, warning=FALSE, echo=T, message=FALSE}
+### Missing Values
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
 # Visualizing Missing Values
 aggr(df, col = c("navyblue", "red"), numbers = TRUE, sortVars = FALSE,
      cex.axis = 0.8, cex.lab = 1.2, cex.numbers = 1.2, main = "Missing Data Visualization")
 
 ```
 
-The visualization illustrates the results of a K-Means clustering algorithm applied to customer data, projected onto two principal components—Dim1 and Dim2—which together capture approximately 95.6% of the total variance (Dim1: 73.3%, Dim2: 22.3%). The plot reveals three distinct customer segments, each represented by a unique color and shape: Cluster 1 (blue circles), Cluster 2 (yellow triangles), and Cluster 3 (grey squares). The separation between clusters is generally clear, indicating well-defined groupings; however, there is a slight overlap between Clusters 2 and 3, suggesting the possibility of similar behaviors or characteristics among customers near the boundary. This dimensionality reduction has proven effective, as most of the important information in the dataset is retained in just two dimensions, allowing for clear interpretation and visual segmentation of the customer base. These insights can be valuable for targeted marketing, personalized services, or strategic business decisions.
+The visualization shows that `CustomerID` has the highest proportion of missing values (0.25), often paired with missing `Description` values (0.01 proportion of combinations).
 
-<small>Dim1 and Dim2 are principal components resulting from a dimensionality reduction technique</small>
+### Visualization
 
-### Data Cleaning and Transformation
-
-```{r}
-
-# Data Cleaning
-df <- df %>%
-  filter(!is.na(CustomerID)) %>%
-  filter(!grepl("^C", InvoiceNo)) %>%
-  filter(Quantity > 0, UnitPrice > 0) %>%
-  mutate(TotalSpending = Quantity * UnitPrice) %>%
-  mutate(InvoiceDate = as.Date(InvoiceDate)) %>%
-  mutate(Description = replace_na(Description, "Unknown"))
-
-```
-
-
-This reduces the dataset to valid transactions, removing 135,080 rows with missing CustomerID, cancelled transactions (starting with "C"), and entries with non-positive Quantity or UnitPrice.
-
-
-
-### Exploratory Data Analysis  
-
-
-EDA provides insights into the dataset’s distributions and patterns.
-
-
-```{r}
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
 # Quantity Histogram
 quantity_plot <- df %>%
   mutate(Quantity_Bins = cut(Quantity, breaks = c(-Inf, 1, 5, 10, 20, 30, 50, Inf))) %>%
@@ -311,7 +293,30 @@ top_countries <- df %>%
 - **Top 5 StockCode (C):** StockCode `85123A` has the highest sales count (~2,000 transactions).
 - **Top 5 Countries (D):** The United Kingdom dominates with over 300,000 transactions, followed by EIRE, France, Germany, and Spain.
 
+:::
 
+---
+
+### Data Cleaning and Transformation
+
+```{r, warning=FALSE, echo=TRUE, message=FALSE}
+
+# Data Cleaning
+df <- df %>%
+  filter(!is.na(CustomerID)) %>%
+  filter(!grepl("^C", InvoiceNo)) %>%
+  filter(Quantity > 0, UnitPrice > 0) %>%
+  mutate(TotalSpending = Quantity * UnitPrice) %>%
+  mutate(InvoiceDate = as.Date(InvoiceDate)) %>%
+  mutate(Description = replace_na(Description, "Unknown"))
+
+```
+
+This reduces the dataset to valid transactions, removing 135,080 rows with missing CustomerID, cancelled transactions (starting with "C"), and entries with non-positive Quantity or UnitPrice.
+
+
+
+## Modeling and Results
 ### RFM Analysis and Data Preparation
 
 RFM analysis quantifies customer behavior using three metrics:
@@ -321,7 +326,7 @@ RFM analysis quantifies customer behavior using three metrics:
 - **Monetary:** Total spending per customer.
 
 
-```{r}
+```{r, warning=FALSE, echo=TRUE, message=FALSE}
 # Outlier Removal Function
 remove_outliers <- function(data, column) {
   Q1 <- quantile(data[[column]], 0.25)
@@ -357,15 +362,24 @@ customer_data_log <- customer_data %>%
 customer_data_scaled <- customer_data_log %>%
   select(-CustomerID) %>%
   scale()
+```
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE, include=FALSE}
+library(ggplot2)
+library(patchwork)
 
 # Visualizing Transformed Data
 p1 <- ggplot(customer_data_log, aes(y = Recency)) + geom_boxplot(fill = "#4CAF50")
 p2 <- ggplot(customer_data_log, aes(y = Frequency)) + geom_boxplot(fill = "#FFC107")
 p3 <- ggplot(customer_data_log, aes(y = Monetary)) + geom_boxplot(fill = "#2196F3")
 
-grid.arrange(p1, p2, p3, ncol = 3)
+print(p1 | p2 | p3)
 
 ```
+
+<center>
+<img src="box_plot.png">
+</center>
 
 - Outliers in `Recency`, `Frequency`, and `Monetary` are removed using the IQR method.
 - Log transformation (`log1p`) reduces skewness in the RFM metrics.
@@ -373,6 +387,7 @@ grid.arrange(p1, p2, p3, ncol = 3)
 
 The boxplots show that after transformation, the distributions are more symmetric, though some outliers remain (e.g., high `Monetary` values).
 
+---
 
 ### K-Means Clustering Analysis  
 
@@ -389,6 +404,7 @@ fviz_nbclust(customer_data_scaled, kmeans, method = "wss") +
 
 In this step, we are using the **Elbow Method** to determine the optimal number of clusters (`k`) for K-Means clustering. The plot displays the **Total Within Sum of Squares (WSS)** for different values of `k`, and we observe how the WSS decreases as the number of clusters increases. In our case, the elbow clearly appears at **k = 3**, meaning that three clusters provide the best segmentation of the data without overfitting. Choosing more than three clusters would result in only marginal improvement while increasing complexity unnecessarily.
 
+---
 
 #### Applying K-Means Clustering
 
@@ -410,11 +426,22 @@ fviz_cluster(kmeans_model,
   labs(title = "Customer Segmentation using K-Means Clustering")
 
 ```
-The visualization shows three distinct clusters, with some overlap between clusters 2 and 3. Dim1 (73%) and Dim2 (22%) capture most of the variance, indicating effective dimensionality reduction.
+
+The visualization illustrates the results of a K-Means clustering algorithm applied to customer data, projected onto two principal components—Dim1 and Dim2—which together capture approximately 95.6% of the total variance (Dim1: 73.3%, Dim2: 22.3%). The plot reveals three distinct customer segments, each represented by a unique color and shape: Cluster 1 (blue circles), Cluster 2 (yellow triangles), and Cluster 3 (grey squares). The separation between clusters is generally clear, indicating well-defined groupings; however, there is a slight overlap between Clusters 2 and 3, suggesting the possibility of similar behaviors or characteristics among customers near the boundary. This dimensionality reduction has proven effective, as most of the important information in the dataset is retained in just two dimensions, allowing for clear interpretation and visual segmentation of the customer base. These insights can be valuable for targeted marketing, personalized services, or strategic business decisions.
+
+<small>Dim1 and Dim2 are principal components resulting from a dimensionality reduction technique</small>
+
+---
 
 #### Cluster Profiling
 
-```{r}
+Cluster Profiling is the process of analyzing the characteristics of different customer segments after applying a clustering algorithm (like K-means). It helps us understand the behavior and value of each group, making it easier to tailor marketing strategies and business decisions. In this analysis, we’ve grouped customers into three clusters based on their Recency, Frequency, and Monetary values (RFM analysis). We then calculated the average values of these metrics for each cluster to interpret their purchasing behavior. By visualizing these summaries, we can clearly identify which clusters contain loyal customers, occasional buyers, or those at risk of churn—allowing businesses to take targeted actions accordingly.
+
+<center>
+<img src="Cluster_Profiling.png">
+</center>
+
+```{r, include=FALSE}
 # Cluster Summary
 cluster_summary <- customer_data_log %>%
   group_by(Cluster) %>%
@@ -457,6 +484,8 @@ ggarrange(p1, p2, p3, ncol = 3, common.legend = TRUE, legend = "right")
 kable(cluster_summary, format = "html", caption = "Cluster Summary", table.attr = "class='table table-striped table-bordered'")
 
 ```
+
+
 
 #### Insights 
 

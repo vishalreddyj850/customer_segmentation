@@ -102,6 +102,12 @@ $$
 Where `J` represents the total clustering variance.
 
 
+<center>
+<img src="kmeans_steps.webp">
+<p style="font-size: small; text-align: center;">K-Means Clustering Algorithm (Image Source: <a href="https://medium.com/@sygong/k-means-clustering-for-customer-segmentations-a-practical-real-world-example-196a10323b9f" target="_blank">Shiyu Gong</a>)</p>
+</center>
+
+
 ### Selection of `k` (Number of Clusters)  
 
 The optimal number of clusters `k` is determined using the **Elbow Method**, which plots WCSS against `k` values. The elbow point—where the rate of decrease in WCSS (Within-Cluster Sum of Squares (WCSS) is a measure of the variance within clusters. The elbow point—where the curve bends—indicates the optimal number of clusters.) diminishes—indicates the optimal `k`.
@@ -391,6 +397,9 @@ fviz_cluster(kmeans_model,
 The visualization illustrates the results of a K-Means clustering algorithm applied to customer data, projected onto two principal components—Dim1 and Dim2—which together capture approximately 95.6% of the total variance (Dim1: 73.3%, Dim2: 22.3%). The plot reveals three distinct customer segments, each represented by a unique color and shape: Cluster 1 (blue circles), Cluster 2 (yellow triangles), and Cluster 3 (grey squares). The separation between clusters is generally clear, indicating well-defined groupings; however, there is a slight overlap between Clusters 2 and 3, suggesting the possibility of similar behaviors or characteristics among customers near the boundary. This dimensionality reduction has proven effective, as most of the important information in the dataset is retained in just two dimensions, allowing for clear interpretation and visual segmentation of the customer base. These insights can be valuable for targeted marketing, personalized services, or strategic business decisions.
 
 #### Cluster Profiling
+
+Cluster Profiling is the process of analyzing the characteristics of different customer segments after applying a clustering algorithm (like K-means). It helps us understand the behavior and value of each group, making it easier to tailor marketing strategies and business decisions. In this analysis, we’ve grouped customers into three clusters based on their Recency, Frequency, and Monetary values (RFM analysis). We then calculated the average values of these metrics for each cluster to interpret their purchasing behavior. By visualizing these summaries, we can clearly identify which clusters contain loyal customers, occasional buyers, or those at risk of churn—allowing businesses to take targeted actions accordingly.
+
 
 ```{r}
 # Cluster Summary
